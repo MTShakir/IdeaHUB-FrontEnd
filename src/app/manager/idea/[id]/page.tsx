@@ -127,7 +127,7 @@ export default function IdeaPage({ params }: PageProps) {
   return (
     
     <div className="min-h-screen bg-gray-100 flex">
-      <div className="w-64 bg-black text-white py-8 px-6 fixed top-0 left-0 h-full">
+      <div className="w-64 bg-stone-900 text-white py-8 px-6 fixed top-0 left-0 h-full">
         <h1 className="text-2xl font-extrabold mb-8">Manager Dashboard</h1>
         <button
             onClick={() => router.push("/manager/dashboard")}
