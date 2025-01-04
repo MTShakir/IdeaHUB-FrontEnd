@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/app/config/api";
 
 export default function MyIdeas() {
   const [ideas, setIdeas] = useState<any[]>([]);
@@ -23,7 +24,7 @@ export default function MyIdeas() {
     const fetchMyIdeas = async () => {
       try {
         const response = await axios.get(
-          "https://mysite-kkqt.onrender.com/api/v1/ideas/my_ideas",
+          `${BASE_URL}/api/v1/ideas/my_ideas`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
