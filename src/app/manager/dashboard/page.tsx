@@ -62,7 +62,7 @@ export default function ManagerDashboard() {
             ? {
                 ...idea,
                 is_shortlisted: !isShortlisted,
-                points: idea.points + (isShortlisted ? -20 : 20),
+                points: idea.points + (isShortlisted ? 0 : 0),
               }
             : idea
         )

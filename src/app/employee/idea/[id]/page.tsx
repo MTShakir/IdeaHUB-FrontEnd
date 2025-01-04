@@ -242,30 +242,37 @@ export default function IdeaPage() {
             </div>
 
             <div className="mt-6">
-              <h3 className="text-xl font-bold mb-2">Comments</h3>
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                className="w-full p-2 border rounded mb-2"
-                placeholder="Write a comment..."
-              ></textarea>
-              <button
-                onClick={handleCommentSubmit}
-                className="px-4 py-2 bg-green-600 text-white font-bold rounded hover:bg-green-500"
-              >
-                Submit Comment
-              </button>
-              <ul className="mt-4 bg-gray-50 p-4 rounded">
-                {comments.map((c) => (
-                  <li key={c.id} className="border-b py-2">
-                    <p className="text-gray-800">{c.content}</p>
-                    <p className="text-sm text-gray-500">
-                      Posted on {new Date(c.created_at).toLocaleDateString()}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-            </div>
+  <h4 className="text-xl font-bold mb-1">All Comments</h4>
+  
+  {/* Comment input area */}
+  <textarea
+    value={comment}
+    onChange={(e) => setComment(e.target.value)}
+    className="w-full p-3 border rounded-md mb-4 shadow-sm focus:ring-2 focus:ring-blue-400"
+    placeholder="Write a comment..."
+  ></textarea>
+  
+  <button
+    onClick={handleCommentSubmit}
+    className="px-6 py-2 bg-green-600 text-white font-bold rounded-md hover:bg-green-500 transition duration-300"
+  >
+    Submit Comment
+  </button>
+  
+  {/* Comment list */}
+  <ul className="space-y-4 mt-6">
+    {comments.map((comment) => (
+      <li key={comment.id} className="p-4 bg-blue-100 rounded-md shadow-sm hover:shadow-md transition duration-300">
+        <p>{comment.content}</p>
+        <p className="text-sm text-gray-500">
+          Posted on {new Date(comment.created_at).toLocaleDateString()}
+        </p>
+      </li>
+    ))}
+  </ul>
+</div>
+
+
           </div>
         ) : (
           <p>No idea found.</p>

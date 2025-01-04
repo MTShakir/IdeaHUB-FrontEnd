@@ -86,7 +86,7 @@ export default function IdeaPage({ params }: PageProps) {
       setIdea({
         ...idea,
         is_shortlisted: !isShortlisted,
-        points: idea.points + (isShortlisted ? -20 : 20),
+        points: idea.points + (isShortlisted ? 0 : 0),
       });
     } catch (error) {
       console.error("Error shortlisting idea:", error);
@@ -105,7 +105,7 @@ export default function IdeaPage({ params }: PageProps) {
     try {
       await axios.post(
         `${BASE_URL}/api/v1/ideas/${(await params).id}/comments`,
-        { content: feedback },
+        { content: `${feedback} \n (Feedback From Manager)` },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -119,21 +119,31 @@ export default function IdeaPage({ params }: PageProps) {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    router.push("/employee/signin");
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-yellow-600 text-white py-4 shadow-md">
-        <div className="container mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Manage Idea</h1>
-          <button
+    
+    <div className="min-h-screen bg-gray-100 flex">
+      <div className="w-64 bg-black text-white py-8 px-6 fixed top-0 left-0 h-full">
+        <h1 className="text-2xl font-extrabold mb-8">Manager Dashboard</h1>
+        <button
             onClick={() => router.push("/manager/dashboard")}
-            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+            className="px-4 py-2 bg-white text-black rounded-md hover:bg-red-600"
           >
             Back to Dashboard
           </button>
-        </div>
-      </header>
+          <button
+          onClick={handleLogout}
+          className="px-4 py-2 bg-red-500 text-white my-2 rounded-md hover:bg-red-600"
+        >
+          Logout
+        </button>
+      </div>
 
-      <main className="container mx-auto mt-8">
+      <main className="ml-72 w-full py-10 px-6">
         {loading ? (
           <p>Loading idea...</p>
         ) : errorMessage ? (
@@ -174,7 +184,7 @@ export default function IdeaPage({ params }: PageProps) {
             </div>
 
             <div className="mt-6">
-              <h4 className="text-xl font-bold">Feedback</h4>
+              <h4 className="text-xl font-bold mb-1">All Comments</h4>
               <ul className="space-y-4">
                 {comments.map((comment) => (
                   <li key={comment.id} className="p-4 bg-blue-100 rounded-md">
