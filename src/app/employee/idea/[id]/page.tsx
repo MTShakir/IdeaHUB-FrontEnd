@@ -83,11 +83,11 @@ export default function IdeaPage() {
       setHasVoted(!hasVoted);
       setIdea((prevIdea: any) => ({
         ...prevIdea,
-        points: hasVoted ? prevIdea.points - 10 : prevIdea.points + 10,
+        points: hasVoted ? prevIdea.points - 50 : prevIdea.points + 50,
       }));
     } catch (error) {
       console.error("Error voting on idea:", error);
-      setErrorMessage("Failed to process your vote. Please try again later.");
+      setErrorMessage("You Have already voted, Only 1 Vote is allowed - refersh page or Go Back");
     }
   };
 
