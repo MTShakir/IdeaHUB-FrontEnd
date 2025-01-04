@@ -134,35 +134,20 @@ export default function MyIdeas() {
 
                   {/* Region */}
                   <div className="mt-2 text-gray-500">
-                    <span className="font-semibold">Region:</span> {idea.region}
+                    <p className="mb-1 mt-4 text-gray-500 px-2 py-2 rounded bg-slate-300">
+                      <strong>Region: </strong> {idea.region}
+                    </p>
+                    <p className="mb-1 mt-1 text-gray-500 px-2 py-2 rounded bg-slate-300">
+                      <strong>Reward Points:  </strong> {idea.points}
+                    </p>
+                    <p className="mb-4 mt-1 text-gray-500 px-2 py-2 rounded bg-slate-300">
+                    <strong>Status:  </strong> {idea.approved ? "Approved by Admin" : "Waiting for Approval"}
+                    </p>
                   </div>
-
+                  
                   {/* Description */}
                   <div className="mt-4">
                     <p className="text-gray-700">{idea.description}</p>
-                  </div>
-
-                  {/* Reward Points */}
-                  
-                  <div className="absolute top-4 right-4 space-y-2 text-right">
-                    <div
-                      className={`px-4 py-2 text-white font-bold rounded-lg ${
-                        idea.points > 10
-                          ? "bg-green-600"
-                          : idea.points > 5
-                          ? "bg-yellow-500"
-                          : "bg-red-500"
-                      }`}
-                    >
-                      Reward Points: {idea.points}
-                    </div>
-                  </div>
-
-                  {/* Approval Status */}
-                  <div className="mt-4">
-                    <p className="text-gray-600">
-                      Status: {idea.approved ? "Approved by Admin" : "Waiting for Approval"}
-                    </p>
                   </div>
 
                   {/* View Idea Button */}

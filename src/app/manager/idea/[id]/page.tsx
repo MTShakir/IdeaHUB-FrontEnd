@@ -151,8 +151,13 @@ export default function IdeaPage({ params }: PageProps) {
         ) : idea ? (
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h3 className="text-2xl font-bold">{idea.title}</h3>
+            <p className="mb-0 mt-4 text-gray-500 ">
+                  <strong>Region: </strong> {idea.region}
+                </p>
+                <p className="mb-6 mt-0 text-gray-500 ">
+                  <strong>Reward Points:  </strong> {idea.points}
+                </p>
             <p className="mt-4">{idea.description}</p>
-            <p className="mt-4 text-gray-600">Points: {idea.points}</p>
 
             <div className="mt-6">
               <button

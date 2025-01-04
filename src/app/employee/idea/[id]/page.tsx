@@ -205,11 +205,13 @@ export default function IdeaPage() {
                   <p className="text-green-500 font-bold text-lg">Shortlisted Idea</p>
                 )}
                 <h2 className="text-2xl font-bold mb-4">{idea.title}</h2>
-                <p className="text-gray-500 mb-4">Region: {idea.region}</p>
-                <p className="text-gray-700 mb-4">{idea.description}</p>
-                <p className="text-gray-600">
-                  Points: <strong>{idea.points}</strong>
+                <p className="mb-1 mt-4 text-gray-500 px-2 py-2 rounded bg-slate-300">
+                  <strong>Region: </strong> {idea.region}
                 </p>
+                <p className="mb-4 mt-1 text-gray-500 px-2 py-2 rounded bg-slate-300">
+                  <strong>Reward Points:  </strong> {idea.points}
+                </p>
+                <p className="text-gray-700 ">{idea.description}</p>
               </div>
               {idea.user_id === userId ? (
                 <div className="mt-4">
@@ -242,8 +244,6 @@ export default function IdeaPage() {
             </div>
 
             <div className="mt-6">
-  <h4 className="text-xl font-bold mb-1">All Comments</h4>
-  
   {/* Comment input area */}
   <textarea
     value={comment}
@@ -258,9 +258,11 @@ export default function IdeaPage() {
   >
     Submit Comment
   </button>
+
   
   {/* Comment list */}
   <ul className="space-y-4 mt-6">
+  <h4 className="text-xl font-bold">All Comments</h4>
     {comments.map((comment) => (
       <li key={comment.id} className="p-4 bg-blue-100 rounded-md shadow-sm hover:shadow-md transition duration-300">
         <p>{comment.content}</p>

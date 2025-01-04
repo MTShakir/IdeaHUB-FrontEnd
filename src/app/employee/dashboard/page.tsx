@@ -148,7 +148,7 @@ export default function EmployeeDashboard() {
                   )}
                 </div>
 
-                <h3 className="text-xl font-semibold">{idea.title}</h3>
+                <h3 className="text-xl font-semibold ">{idea.title}</h3>
                 <p className="mt-2 text-gray-500">
                   <strong>Region: </strong> {idea.region}
                 </p>

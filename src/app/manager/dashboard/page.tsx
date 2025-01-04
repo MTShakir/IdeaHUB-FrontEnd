@@ -105,10 +105,15 @@ export default function ManagerDashboard() {
                 key={idea.id}
                 className="bg-white shadow-lg rounded-lg p-6 hover:shadow-xl transition duration-300"
               >
-                <h3 className="text-lg font-bold">{idea.title}</h3>
+                <h3 className="text-lg font-bold rounded px-2 py-2 bg-slate-300">{idea.title}</h3>
+                <p className="mb-0 mt-4 text-gray-500 ">
+                  <strong>Region: </strong> {idea.region}
+                </p>
+                <p className="mb-6 mt-0 text-gray-500 ">
+                  <strong>Reward Points:  </strong> {idea.points}
+                </p>
                 <p className="mt-2 text-gray-700">{idea.description}</p>
                 <div className="mt-4 flex justify-between items-center">
-                  <span className="text-gray-500">Points: {idea.points}</span>
                   <div className="flex space-x-2">
                     <button
                       onClick={() => handleShortlist(idea.id, idea.is_shortlisted)}
