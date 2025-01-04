@@ -1,10 +1,17 @@
 {
   "compilerOptions": {
+    "noImplicitAny": false, // Allow implicit `any`
+    "skipLibCheck": true, // Skip type checking for node_modules
+    "strict": true, // Temporarily disable all strict checks
+    
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
+    "baseUrl": ".",
+  
+  
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",

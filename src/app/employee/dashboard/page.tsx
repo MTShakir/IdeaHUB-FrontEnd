@@ -22,17 +22,26 @@ export default function EmployeeDashboard() {
   const router = useRouter();
   const [activePage, setActivePage] = useState("allIdeas");
 
-  const fetchUserDetails = useCallback(async (token: string) => {
-    try {
-      const response = await axios.get(`${BASE_URL}/api/v1/users/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log("User:", response.data.full_name); // Debugging (or remove)
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-      logout();
-    }
-  }, []);
+  // Logout wrapped in useCallback
+  const logout = useCallback(() => {
+    localStorage.removeItem("token");
+    router.push("/employee/signin");
+  }, [router]);
+
+  const fetchUserDetails = useCallback(
+    async (token: string) => {
+      try {
+        const response = await axios.get(`${BASE_URL}/api/v1/users/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log("User:", response.data.full_name); // Debugging (or remove)
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+        logout();
+      }
+    },
+    [logout]
+  );
 
   const fetchIdeas = useCallback(async (token: string) => {
     try {
@@ -57,11 +66,6 @@ export default function EmployeeDashboard() {
       fetchIdeas(token);
     }
   }, [fetchUserDetails, fetchIdeas, router]);
-
-  const logout = () => {
-    localStorage.removeItem("token");
-    router.push("/employee/signin");
-  };
 
   const handlePageChange = (page: string) => {
     setActivePage(page);
@@ -144,18 +148,16 @@ export default function EmployeeDashboard() {
                   )}
                 </div>
 
-                <h3 className="text-xl font-semibold">
-                  <strong>Title:  </strong>{idea.title}
-                </h3>
+                <h3 className="text-xl font-semibold">{idea.title}</h3>
                 <p className="mt-2 text-gray-500">
                   <strong>Region: </strong> {idea.region}
                 </p>
                 <p className="mt-2 text-gray-500">
                   <strong>Reward Points:  </strong> {idea.points}
                 </p>
-                <p className="mt-4">
-                  <strong>Description:  </strong>{idea.description}
-                </p>
+
+                <p className="mt-4">{idea.description}</p>
+
                 <div className="mt-6 text-left">
                   <a
                     href={`/employee/idea/${idea.id}`}

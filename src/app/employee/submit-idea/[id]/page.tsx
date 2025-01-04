@@ -1,22 +1,39 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, use } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { BASE_URL } from "@/app/config/api";
 
-export default function UpdateIdeaPage({ params }: { params: { id: string } }) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [region, setRegion] = useState("Select Region");
-  const [colaborative, setColaborative] = useState(false);
-  const [approved, setApproved] = useState(false); // Added for approval status
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [loading, setLoading] = useState(true);
+// Define the expected prop type for dynamic route params
+interface PageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+// Define the type for idea data returned from API
+interface Idea {
+  title: string;
+  description: string;
+  region: string;
+  colaborative: boolean;
+  approved: boolean;
+}
+
+// Component now uses PageProps to satisfy Next.js requirements
+export default function UpdateIdeaPage({ params }: PageProps) {
+  const resolvedParams = use(params); // Unwrap the params using React.use()
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [region, setRegion] = useState<string>("Select Region");
+  const [colaborative, setColaborative] = useState<boolean>(false);
+  const [approved, setApproved] = useState<boolean>(false);
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
 
-  // List of regions (can extend this as needed)
   const regions = [
     "Africa",
     "Asia",
@@ -27,41 +44,42 @@ export default function UpdateIdeaPage({ params }: { params: { id: string } }) {
     "Antarctica",
   ];
 
+  // Fetch Idea Data - useCallback to prevent missing dependency warnings
+  const fetchIdeaData = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setErrorMessage("You must be logged in to update an idea.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { data }: { data: Idea } = await axios.get(
+        `${BASE_URL}/api/v1/ideas/${resolvedParams.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setTitle(data.title);
+      setDescription(data.description);
+      setRegion(data.region);
+      setColaborative(data.colaborative);
+      setApproved(data.approved);
+      setLoading(false);
+    } catch (error) {
+      setErrorMessage("Failed to fetch the idea details.");
+      setLoading(false);
+      console.error(error);
+    }
+  }, [resolvedParams.id]);
+
   useEffect(() => {
-    const fetchIdeaData = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setErrorMessage("You must be logged in to update an idea.");
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const response = await axios.get(
-          `${BASE_URL}/api/v1/ideas/${params.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const idea = response.data;
-        setTitle(idea.title);
-        setDescription(idea.description);
-        setRegion(idea.region);
-        setColaborative(idea.colaborative);
-        setApproved(idea.approved); // Fetch the approval status
-        setLoading(false);
-      } catch (error) {
-        setErrorMessage("Failed to fetch the idea details.");
-        setLoading(false);
-        console.error(error);
-      }
-    };
-
     fetchIdeaData();
-  }, [params.id]);
+  }, [fetchIdeaData]);
 
+  // Handle form submission
   const handleUpdateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
@@ -77,8 +95,8 @@ export default function UpdateIdeaPage({ params }: { params: { id: string } }) {
     }
 
     try {
-      const response = await axios.put(
-        `${BASE_URL}/api/v1/ideas/${params.id}`,
+      await axios.put(
+        `${BASE_URL}/api/v1/ideas/${resolvedParams.id}`,
         {
           idea: {
             title,
@@ -155,44 +173,36 @@ export default function UpdateIdeaPage({ params }: { params: { id: string } }) {
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full p-4 border-2 border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter the title of your idea"
+                className="w-full p-4 border-2 border-gray-300 rounded-md shadow-md"
                 required
               />
             </div>
 
             {/* Description Textarea */}
             <div className="mb-6">
-              <label
-                htmlFor="description"
-                className="block text-lg font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="description" className="block text-lg font-medium text-gray-700 mb-2">
                 Description
               </label>
               <textarea
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full p-4 border-2 border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-4 border-2 border-gray-300 rounded-md shadow-md"
                 rows={6}
-                placeholder="Provide a brief description of your idea"
                 required
               />
             </div>
 
             {/* Region Dropdown */}
             <div className="mb-6">
-              <label
-                htmlFor="region"
-                className="block text-lg font-medium text-gray-700 mb-2"
-              >
+              <label htmlFor="region" className="block text-lg font-medium text-gray-700 mb-2">
                 Region
               </label>
               <select
                 id="region"
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                className="w-full p-4 border-2 border-gray-300 rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full p-4 border-2 border-gray-300 rounded-md shadow-md"
                 required
               >
                 <option disabled>Select Region</option>
@@ -211,18 +221,14 @@ export default function UpdateIdeaPage({ params }: { params: { id: string } }) {
                 type="checkbox"
                 checked={colaborative}
                 onChange={(e) => setColaborative(e.target.checked)}
-                className="mr-4 h-5 w-5 text-blue-500 focus:ring-2 focus:ring-blue-500"
+                className="mr-4 h-5 w-5 text-blue-500"
               />
               <label htmlFor="colaborative" className="text-lg text-gray-700">
-                Is this a collaborative idea?
+                Collaborative Idea
               </label>
             </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white text-lg font-semibold rounded-md hover:bg-indigo-600 transition duration-300"
-            >
+            <button type="submit" className="w-full py-3 bg-blue-600 text-white rounded-md">
               Update Idea
             </button>
           </form>

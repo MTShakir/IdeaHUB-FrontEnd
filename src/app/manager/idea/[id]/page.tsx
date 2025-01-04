@@ -5,11 +5,18 @@ import axios from "axios";
 import { BASE_URL } from "@/app/config/api";
 import { useRouter } from "next/navigation";
 
-export default function IdeaPage({ params }: { params: { id: string } }) {
+// Adjust PageProps to handle the possible promise nature of params
+interface PageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export default function IdeaPage({ params }: PageProps) {
   const [idea, setIdea] = useState<any>(null);
-  const [feedback, setFeedback] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [feedback, setFeedback] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [comments, setComments] = useState<any[]>([]);
   const router = useRouter();
 
@@ -18,14 +25,17 @@ export default function IdeaPage({ params }: { params: { id: string } }) {
     if (!token) {
       router.push("/employee/signin");
     } else {
-      fetchIdea(token);
-      fetchComments(token);
+      // Wait for params to resolve if it's a Promise
+      params.then((resolvedParams) => {
+        fetchIdea(token, resolvedParams.id);
+        fetchComments(token, resolvedParams.id);
+      });
     }
-  }, []);
+  }, [router, params]);
 
-  const fetchIdea = async (token: string) => {
+  const fetchIdea = async (token: string, id: string) => {
     try {
-      const response = await axios.get(`${BASE_URL}/api/v1/ideas/${params.id}`, {
+      const response = await axios.get(`${BASE_URL}/api/v1/ideas/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setIdea(response.data);
@@ -37,11 +47,14 @@ export default function IdeaPage({ params }: { params: { id: string } }) {
     }
   };
 
-  const fetchComments = async (token: string) => {
+  const fetchComments = async (token: string, id: string) => {
     try {
-      const response = await axios.get(`${BASE_URL}/api/v1/ideas/${params.id}/comments`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(
+        `${BASE_URL}/api/v1/ideas/${id}/comments`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setComments(response.data);
     } catch (error) {
       console.error("Error fetching comments:", error);
@@ -58,8 +71,8 @@ export default function IdeaPage({ params }: { params: { id: string } }) {
     }
 
     try {
-      const response = await axios.put(
-        `${BASE_URL}/api/v1/ideas/${params.id}`,
+      await axios.put(
+        `${BASE_URL}/api/v1/ideas/${(await params).id}`,
         {
           idea: {
             is_shortlisted: !isShortlisted,
@@ -91,7 +104,7 @@ export default function IdeaPage({ params }: { params: { id: string } }) {
 
     try {
       await axios.post(
-        `${BASE_URL}/api/v1/ideas/${params.id}/comments`,
+        `${BASE_URL}/api/v1/ideas/${(await params).id}/comments`,
         { content: feedback },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -99,7 +112,7 @@ export default function IdeaPage({ params }: { params: { id: string } }) {
       );
       alert("Feedback submitted successfully!");
       setFeedback("");
-      fetchComments(token);  // Refresh the comments after submission
+      fetchComments(token, (await params).id); // Refresh the comments after submission
     } catch (error) {
       console.error("Error submitting feedback:", error);
       setErrorMessage("Failed to submit feedback. Please try again.");

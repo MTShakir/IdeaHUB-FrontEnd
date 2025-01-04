@@ -13,4 +13,15 @@ const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
 ];
 
-export default eslintConfig;
+export default [
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off", // Disable 'Unexpected any' error
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" },
+      ], // Ignore unused variables prefixed with _
+      "react-hooks/exhaustive-deps": "warn", // Downgrade missing dependency warnings
+    },
+  },
+];

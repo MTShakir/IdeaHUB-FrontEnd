@@ -3,6 +3,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { BASE_URL } from "@/app/config/api";
 
 export default function SubmitIdea() {
   const [title, setTitle] = useState("");
@@ -40,7 +41,7 @@ export default function SubmitIdea() {
 
     try {
       const response = await axios.post(
-        "https://mysite-kkqt.onrender.com/api/v1/ideas",
+        `${BASE_URL}/api/v1/ideas`,
         {
           idea: {
             title,
